@@ -1,4 +1,4 @@
-(ns link.core
+(ns linkd.core
   (:import [org.jboss.netty.channel SimpleChannelUpstreamHandler]))
 
 (defmacro ^{:private true} make-handler-macro [evt]
