@@ -1,6 +1,5 @@
 (ns linkd.codec
   (:refer-clojure :exclude [byte float double])
-  (:use [clojure.core.match :only [match]])
   (:import [java.nio ByteBuffer])
   (:import [org.jboss.netty.buffer
             ChannelBuffer
@@ -52,25 +51,24 @@
     (let [{:keys [prefix encoding delimiter]} options
           encoding (name encoding)
           bytes (.getBytes data encoding)]
-      (match [prefix delimiter]
+      (cond
         ;; length prefix string
-        [_ nil]
+        (not (nil? prefix))
         (do
           ((:encoder (prefix)) (alength bytes) buffer)
           (.writeBytes buffer ^bytes bytes))
         ;; delimiter based string
-        [nil _]
+        (not (nil? delimiter))
         (do
           (.writeBytes buffer ^bytes bytes)
-          (.writeBytes buffer ^bytes
-            (.getBytes delimiter encoding)))))
+          (.writeBytes buffer ^bytes (.getBytes delimiter encoding)))))
     buffer)
   (decoder [options buffer]
     (let [{:keys [prefix encoding delimiter]} options
           encoding (name encoding)]
-      (match [prefix delimiter]
+      (cond
         ;; length prefix string
-        [_ nil]
+        (not (nil? prefix))
         (do
           (let [byte-length ((:decoder (prefix)) buffer)
                 bytes (byte-array byte-length)]
@@ -78,7 +76,7 @@
             (String. bytes encoding)))
 
         ;; delimiter based string
-        [nil _]
+        (not (nil? delimiter))
         (do
           (let [dbytes (.getBytes delimiter encoding)
                 dlength (find-delimiter buffer dbytes)
