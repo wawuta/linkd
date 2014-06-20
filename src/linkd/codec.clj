@@ -142,11 +142,11 @@
 
 ;;TODO
 
-(defn encode [codec data]
-  (let [buffer (ChannelBuffers/dynamicBuffer)]
-
-    buffer))
+(defn encode
+  ([codec data] (encode codec data (ChannelBuffers/dynamicBuffer)))
+  ([codec data buffer]
+    ((:encoder codec) data buffer)))
 
 (defn decode [codec buffer]
-  )
+  ((:decoder codec) buffer))
 
