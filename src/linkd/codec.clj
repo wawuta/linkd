@@ -165,7 +165,7 @@
                 buffer (encode codec data)]
             (Channels/write ctx (.getFuture e) buffer (.getRemoteAddress e))))))))
 
-(defn netty-encoder [codec]
+(defn netty-decoder [codec]
   (reify ChannelUpstreamHandler
     (handleUpstream [this ctx e]
       (if-not (instance? MessageEvent e)
