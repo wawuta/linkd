@@ -1,5 +1,5 @@
-(ns linkd.codec
-  (:refer-clojure :exclude [byte])
+(ns link.codec
+  (:refer-clojure :exclude [byte float double])
   (:import [java.nio ByteBuffer])
   (:import [org.jboss.netty.buffer
             ChannelBuffer
@@ -28,12 +28,13 @@
 (primitive-codec byte writeByte readByte)
 (primitive-codec int16 writeShort readShort)
 (primitive-codec uint16 writeShort readUnsignedShort)
-(primitive-codec int24 writeMedium readmedium)
-(primitive-codec uint24 writeMedium readMedium)
+(primitive-codec int24 writeMedium readMedium)
+(primitive-codec uint24 writeMedium readUnsignedMedium)
 (primitive-codec int32 writeInt readInt)
 (primitive-codec uint32 writeInt readUnsignedInt)
 (primitive-codec int64 writeLong readLong)
-
+(primitive-codec float writeFloat readFloat)
+(primitive-codec double writeDouble readDouble)
 
 (defn- find-delimiter [^ChannelBuffer src ^bytes delim]
   (loop [sindex (.readerIndex src) dindex 0]
@@ -54,7 +55,7 @@
         ;; length prefix string
         (not (nil? prefix))
         (do
-          ((:encoder prefix) nil (alength bytes) buffer)
+          ((:encoder prefix ) nil (alength bytes) buffer)
           (.writeBytes buffer ^bytes bytes))
         ;; delimiter based string
         (not (nil? delimiter))
@@ -66,7 +67,7 @@
     (let [{prefix :prefix encoding :encoding delimiter :delimiter} options
           encoding (name encoding)]
       (cond
-        ;;  length prefix string
+        ;; length prefix string
         (not (nil? prefix))
         (do
           (let [byte-length ((:decoder prefix) nil buffer)
@@ -74,7 +75,7 @@
             (.readBytes buffer ^bytes bytes)
             (String. bytes encoding)))
 
-        ;;  delimiter based string
+        ;; delimiter based string
         (not (nil? delimiter))
         (do
           (let [dbytes (.getBytes delimiter encoding)
@@ -95,8 +96,8 @@
     (let [{prefix :prefix} options
           byte-length ((:decoder prefix) buffer)
           local-buffer (ByteBuffer/allocate byte-length)]
-    (.readBytes buffer ^ByteBuffer local-buffer)
-    local-buffer)))
+      (.readBytes buffer ^ByteBuffer local-buffer)
+      local-buffer)))
 
 ;;TODO
 
@@ -107,3 +108,4 @@
 
 (defn decode [codec buffer]
   )
+
