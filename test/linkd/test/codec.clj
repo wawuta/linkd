@@ -1,7 +1,7 @@
 (ns linkd.test.codec
   (:refer-clojure :exclude [byte float double])
   (:use [clojure.test])
-  (:use [link.codec])
+  (:use [linkd.codec])
   (:import [org.jboss.netty.buffer ChannelBuffers]))
 
 (deftest test-codecs
