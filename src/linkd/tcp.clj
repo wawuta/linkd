@@ -36,7 +36,7 @@
                          decoder nil
                          codec nil
                          boss-pool (Executors/newCachedThreadPool)
-                         worker-pool Executors/newCachedThreadPool)}}]
+                         worker-pool (Executors/newCachedThreadPool)}}]
   (let [encoder (or encoder codec)
         decoder (or decoder codec)]
     (start-tcp-server port handler encoder decoder boss-pool worker-pool)))
