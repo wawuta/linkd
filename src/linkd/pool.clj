@@ -29,3 +29,9 @@
                       (exhausted-actions exhausted-actions)
                       max-wait
                       max-idle))
+
+(defn borrow [pool]
+  (.borrowObject pool))
+
+(defn return [pool object]
+  (.returnObject pool object))
